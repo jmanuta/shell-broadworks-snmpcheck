@@ -1,27 +1,17 @@
 #!/usr/bin/env bash
 # jmanuta@bluip.com | 2018.02.08
-
+# Description:  BW snmptraps.log parse tool
 
 
 bwLogPath="/bw/broadworks/logs/"
 snmpLog=$(find ${bwLogPath} -name 'snmptraps.log' 2>&1 | grep -v '^find')
-newestRecord=$(date +%Y/%m/%d' '%H:%M:%S' GMT')
-oldestRecord=$(
-	date -d @$(
-		head -2 ${snmpLog} |\
-			tail -1 |\
-			cut -d',' -f2 |\
-			cut -c1-10
-    ) +%Y/%m/%d' '%H:%M:%S' GMT'
-)
-
 
 usage() {
 	if [ -z "${1}" ]; then
 		msg+="Description:\tSNMP parse tool\n"
 		msg+="Usage:\t\t$(basename ${0}) <command> [string]\n"
 		msg+="Commands:\tlist \t- List count of entries\n"
-		msg+="\t\tdetail \t- List timestamps for a specific alarm\n"
+		msg+="\t\tdetail \t- Expand the specified alarm\n"
 		msg+="\t\tsearch \t- Search for a string or \"all\""
 		echo -e "\n${msg}\n"
 		exit
@@ -30,6 +20,22 @@ usage() {
 
 
 action() {
+
+	# Creates a series of dashes
+	separator=$(for i in $(seq 25); do echo -n "--"; done)
+
+	# Find oldest and newest alarmtimestamps
+	newestRecord=$(date +%Y/%m/%d' '%H:%M:%S' GMT')
+	oldestRecord=$(
+		date -d @$(
+			head -2 ${snmpLog} |\
+				tail -1 |\
+				cut -d',' -f2 |\
+				cut -c1-10
+    	) +%Y/%m/%d' '%H:%M:%S' GMT'
+	)
+
+
 	if [ "${1}" = "list" ]; then
 
 		:<<-Comment
@@ -88,16 +94,17 @@ action() {
 
 	elif [ "${1}" = "detail" ]; then
 		shift
+
 		results=$(
 			awk '
 				BEGIN {
 					RS=">\n<"
 					FS="\n"
-					ORS="\n----------------------------------------\n"
 				} $0 ~ /'"${1}"'/ {
 					print $0
 				}' $snmpLog
 		)
+
 		severity=$(echo "$results" | grep -v "^$\|^<$" | head -1 | cut -d, -f3 | sed 's/\"//g')
 		timestamps=$(
 			counter=1
@@ -131,7 +138,7 @@ action() {
 				BEGIN {
 					RS=">\n<"
 					FS="\n"
-					ORS="\n----------------------------------------\n"
+					ORS="\n'${separator}'\n"
 				} $0 ~ /'"${pattern}"'/ {
 					print $0
 				}' ${snmpLog}
@@ -140,7 +147,8 @@ action() {
         echo -e "\nServer:\t\t${HOSTNAME}"
         echo -e " Range:\t\t${oldestRecord}"
         echo -e "\t\t${newestRecord}"
-        echo -e "\n${results}\n"
+		echo -e "\n\n${separator}"
+        echo -e "${results}\n"
 
 
 	else
@@ -152,3 +160,4 @@ action() {
 
 usage ${1}
 action ${1} ${2}
+
