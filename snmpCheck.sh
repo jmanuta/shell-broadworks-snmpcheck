@@ -18,14 +18,12 @@ oldestRecord=$(
 
 usage() {
 	if [ -z "${1}" ]; then
-		(
-        msg+="Description:\tSNMP parse tool\n"
-        msg+="Usage:\t\t$(basename ${0}) <command> [string]\n"
-        msg+="Commands:\tlist \t- List count of entries\n"
-        msg+="\t\tdetail \t- Expand the specified alarm\n"
-        msg+="\t\tsearch \t- Search for a string or \"all\""
+		msg+="Description:\tSNMP parse tool\n"
+		msg+="Usage:\t\t$(basename ${0}) <command> [string]\n"
+		msg+="Commands:\tlist \t- List count of entries\n"
+		msg+="\t\tdetail \t- List timestamps for a specific alarm\n"
+		msg+="\t\tsearch \t- Search for a string or \"all\""
 		echo -e "\n${msg}\n"
-		) 1>&2
 		exit
 	fi
 }
@@ -38,13 +36,13 @@ action() {
 		$results is a string which lists each alarm type, along with
 		the number of occurrences.  Example --
 		
-        (872)   bwSystemHealthReport
-        (32)    bwConfigurationChanged
-        (26)    bwCPUIdleTimeLimitReached
-        (24)    bwApplicationStateTransition
-        (3)     bwPMhttpdLaunched
-        (3)     bwPMhttpdShutDown
-        (3)     bwPMtomcatLaunched
+		(872)	bwSystemHealthReport
+		(32)	bwConfigurationChanged
+		(26)	bwCPUIdleTimeLimitReached
+		(24)	bwApplicationStateTransition
+		(3)	bwPMhttpdLaunched
+		(3)	bwPMhttpdShutDown
+		(3)	bwPMtomcatLaunched
 		Comment
 
 		results=$(awk '
@@ -72,16 +70,16 @@ action() {
 		as the "Records" header.  A combination of head, sed and tail were used
 		to output the data like this:
 
-        Records:    (872)    bwSystemHealthReport
-                    (32)     bwConfigurationChanged
-                    (26)     bwCPUIdleTimeLimitReached
-                    (24)     bwApplicationStateTransition
-                    (3)      bwPMhttpdLaunched
-                    (3)      bwPMhttpdShutDown
-                    (3)      bwPMtomcatLaunched
-                    (3)      bwPMtomcatShutDown
-                    (1)      bwPMconfigdLaunched
-                    (1)      bwPMlmdLaunched
+		Records:	(872)	bwSystemHealthReport
+				(32)	bwConfigurationChanged
+				(26)	bwCPUIdleTimeLimitReached
+				(24)	bwApplicationStateTransition
+				(3)	bwPMhttpdLaunched
+				(3)	bwPMhttpdShutDown
+				(3)	bwPMtomcatLaunched
+				(3)	bwPMtomcatShutDown
+				(1)	bwPMconfigdLaunched
+				(1)	bwPMlmdLaunched
 		Comment
 
 		echo -e "\nRecords:\t$(echo "${results}" | head -1 | sed s'/^[[:space:]]*//')"
