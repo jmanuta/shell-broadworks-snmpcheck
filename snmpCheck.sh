@@ -39,9 +39,9 @@ action() {
 		(32)	bwConfigurationChanged
 		(26)	bwCPUIdleTimeLimitReached
 		(24)	bwApplicationStateTransition
-		(3)		bwPMhttpdLaunched
-		(3)		bwPMhttpdShutDown
-		(3)		bwPMtomcatLaunched
+		(3)	bwPMhttpdLaunched
+		(3)	bwPMhttpdShutDown
+		(3)	bwPMtomcatLaunched
 		Comment
 
 		results=$(awk '
@@ -73,12 +73,12 @@ action() {
 					(32)	bwConfigurationChanged
 					(26)	bwCPUIdleTimeLimitReached
 					(24)	bwApplicationStateTransition
-					(3)		bwPMhttpdLaunched
-					(3)		bwPMhttpdShutDown
-					(3)		bwPMtomcatLaunched
-					(3)		bwPMtomcatShutDown
-					(1)		bwPMconfigdLaunched
-					(1)		bwPMlmdLaunched
+					(3)	bwPMhttpdLaunched
+					(3)	bwPMhttpdShutDown
+					(3)	bwPMtomcatLaunched
+					(3)	bwPMtomcatShutDown
+					(1)	bwPMconfigdLaunched
+					(1)	bwPMlmdLaunched
 		Comment
 
 		echo -e "\nRecords:\t$(echo "${results}" | head -1 | sed s'/^[[:space:]]*//')"
